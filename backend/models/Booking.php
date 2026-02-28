@@ -12,12 +12,7 @@ class Booking {
     public function create($data) {
         $query = "INSERT INTO " . $this->table_name . " 
                 SET user_id=:user_id, location_id=:location_id, start_time=:start_time, 
-                    end_time=:end_time, total_price=:total_price, status='pending', created_at=NOW()";
-        
-        // Handle optional payment proof if passed
-        if(isset($data['payment_proof'])) {
-            $query .= ", payment_proof=:payment_proof";
-        }
+                    end_time=:end_time, total_price=:total_price, status='confirmed', created_at=NOW()";
 
         $stmt = $this->conn->prepare($query);
 
@@ -28,10 +23,6 @@ class Booking {
         $stmt->bindParam(":start_time", $data['start_time']);
         $stmt->bindParam(":end_time", $data['end_time']);
         $stmt->bindParam(":total_price", $data['total_price']);
-        
-        if(isset($data['payment_proof'])) {
-            $stmt->bindParam(":payment_proof", $data['payment_proof']);
-        }
 
         if($stmt->execute()) {
             return $this->conn->lastInsertId();
@@ -51,7 +42,7 @@ class Booking {
     }
 
     public function findByVendor($vendor_id) {
-        $query = "SELECT b.*, l.name as location_name, u.name as user_name, u.email as user_email
+        $query = "SELECT b.*, l.name as location_name, u.full_name as user_name, u.email as user_email
                   FROM " . $this->table_name . " b
                   JOIN locations l ON b.location_id = l.id
                   JOIN users u ON b.user_id = u.id
@@ -72,13 +63,10 @@ class Booking {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function confirmPayment($id, $transaction_id) {
-        // We might store transaction_id in payment_proof or a new column?
-        // Existing schema has payment_proof varchar.
-        $query = "UPDATE " . $this->table_name . " SET status = 'confirmed', payment_proof = :proof WHERE id = :id";
+    public function confirmPayment($id) {
+        $query = "UPDATE " . $this->table_name . " SET status = 'confirmed' WHERE id = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":id", $id);
-        $stmt->bindParam(":proof", $transaction_id);
         return $stmt->execute();
     }
 
@@ -123,7 +111,7 @@ class Booking {
     }
 
     public function getAllBookings() {
-        $query = "SELECT b.*, l.name as location_name, u.name as user_name, u.email as user_email 
+        $query = "SELECT b.*, l.name as location_name, u.full_name as user_name, u.email as user_email 
                   FROM " . $this->table_name . " b
                   LEFT JOIN locations l ON b.location_id = l.id
                   LEFT JOIN users u ON b.user_id = u.id

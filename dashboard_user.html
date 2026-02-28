@@ -74,7 +74,7 @@
                         <div class="glass-panel" style="padding: 0;">
                             <div style="padding: 1.25rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
                                 <span style="font-weight: 600;">${b.location_name}</span>
-                                <span style="padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; ${b.status === 'pending' ? 'background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid var(--warning);' : 'background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success);'}">
+                                <span style="padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; ${b.status === 'confirmed' ? 'background: rgba(16, 185, 129, 0.2); color: var(--success); border: 1px solid var(--success);' : (b.status === 'cancelled' ? 'background: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid var(--danger);' : 'background: rgba(245, 158, 11, 0.2); color: var(--warning); border: 1px solid var(--warning);')}">
                                     ${b.status}
                                 </span>
                             </div>
@@ -93,7 +93,7 @@
                                     <span style="color: var(--primary); font-weight: 700; font-size: 1.1rem;">NPR ${b.total_price}</span>
                                 </div>
                                 
-                                ${b.status === 'pending' ? `<button class="btn btn-danger" onclick="cancelBooking(${b.id})" style="width: 100%; margin-top: 1rem;">Cancel Reservation</button>` : ''}
+                                ${b.status === 'confirmed' ? `<button class="btn btn-danger" onclick="cancelBooking(${b.id})" style="width: 100%; margin-top: 1rem;">Cancel Reservation</button>` : ''}
                             </div>
                         </div>
                     `).join('');
@@ -110,6 +110,7 @@
             try {
                 const response = await fetch('backend/router.php?action=cancel_booking', {
                     method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ booking_id: id })
                 });
                 const result = await response.json();

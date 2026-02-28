@@ -32,7 +32,10 @@ function test_step($name, $callback) {
 
 // 0. Cleanup (Optional, but good for repeatability)
 $db = Database::getInstance()->getConnection();
+$db->exec("DELETE FROM bookings");
+$db->exec("DELETE FROM locations");
 $db->exec("DELETE FROM users WHERE email LIKE 'test_%@example.com'");
+$db->exec("DELETE FROM vendors WHERE email LIKE 'test_%@example.com'");
 
 // 1. Create Vendor
 $vendorEmail = 'test_vendor_' . time() . '@example.com';
@@ -43,7 +46,10 @@ test_step("Register Vendor", function() use ($vendorEmail) {
         'email' => $vendorEmail,
         'password' => 'password123',
         'phone' => '9800000000',
-        'role' => 'vendor'
+        'role' => 'vendor',
+        'business_name' => 'Test Parking Co',
+        'pan_number' => '123456',
+        'address' => 'Test Address'
     ]);
 });
 

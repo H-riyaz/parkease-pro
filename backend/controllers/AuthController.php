@@ -43,12 +43,15 @@ class AuthController {
                 'password' => $data['password'],
                 'full_name' => $data['name'], // Frontend sends 'name'
                 'phone' => $data['phone'],
-                'role' => $data['role']
+                'role' => $data['role'],
+                'business_name' => $data['business_name'] ?? null,
+                'pan_number' => $data['pan_number'] ?? null,
+                'address' => $data['address'] ?? null
             ]);
             
             if ($userId) {
                 // Set session
-                $user = $this->userModel->findById($userId);
+                $user = $this->userModel->findById($userId, $data['role']);
                 $this->setSession($user);
                 
                 return [
@@ -110,8 +113,8 @@ class AuthController {
     }
     
     public function checkAuth() {
-        if (isset($_SESSION['user_id'])) {
-            $user = $this->userModel->findById($_SESSION['user_id']);
+        if (isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
+            $user = $this->userModel->findById($_SESSION['user_id'], $_SESSION['user_role']);
             if ($user) {
                 return [
                     'success' => true,

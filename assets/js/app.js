@@ -88,8 +88,7 @@ async function handleAuth(event, action, isFormAdmin = false) {
     try {
         const response = await fetch(`backend/router.php?action=${action}`, {
             method: 'POST',
-            widthCredentials: true, // For axios
-            credentials: 'include', // For fetch
+            credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
@@ -396,9 +395,6 @@ async function loadLocations(fitBounds = true) {
 
             if (allLocations.length === 0) {
                 console.warn("No locations found.");
-                if (confirm("No parking locations found. Would you like to load demo data?")) {
-                    window.location.href = 'backend/seed.php';
-                }
             }
 
             // Render Map
@@ -443,7 +439,7 @@ async function loadLocations(fitBounds = true) {
                                 <span style="color: var(--text-muted);">Rate</span>
                                 <strong style="color: var(--primary);">NPR ${loc.price_per_hour}/hr</strong>
                             </div>
-                            <button onclick="event.stopPropagation(); openBookingModal(${loc.id}, '${loc.name}', ${loc.price_per_hour}, '${loc.qr_code_url || ''}')" class="btn" style="width: 100%;">Book Spot</button>
+                            <button onclick="event.stopPropagation(); openBookingModal(${loc.id}, '${loc.name.replace(/'/g, "\\'")}', ${loc.price_per_hour}, '${loc.qr_code_url || ''}')" class="btn" style="width: 100%;">Book Spot</button>
                         </div>
                     </div>
                 `).join('');
@@ -540,9 +536,9 @@ window.openBookingModal = function (id, name, price, qrUrl) {
                 const res = await response.json();
 
                 if (res.success) {
-                    alert("Booking Request Sent!");
+                    alert("Booking Confirmed!");
                     modal.style.display = 'none';
-                    if (confirm("Booking pending. Go to dashboard?")) {
+                    if (confirm("Your spot is reserved. Go to dashboard?")) {
                         window.location.href = 'dashboard_user.html';
                     }
                 } else {

@@ -96,7 +96,7 @@ class Location {
                   (l.total_slots - (
                       SELECT COUNT(*) FROM bookings b 
                       WHERE b.location_id = l.id 
-                      AND b.status IN ('confirmed', 'pending')
+                      AND b.status = 'confirmed'
                       AND b.start_time <= :now AND b.end_time > :now
                   )) as available_slots
                   FROM " . $this->table_name . " l 
@@ -131,7 +131,7 @@ class Location {
         // Overlap logic: (StartA <= EndB) and (EndA >= StartB)
         $query = "SELECT COUNT(*) as booked FROM bookings 
                   WHERE location_id = :lid 
-                  AND status IN ('confirmed', 'pending')
+                  AND status = 'confirmed'
                   AND (start_time < :end AND end_time > :start)";
         
         $stmt = $this->conn->prepare($query);
@@ -154,9 +154,9 @@ class Location {
 
     // Admin
     public function getPendingApprovals() {
-        $query = "SELECT l.*, u.name as vendor_name, u.email as vendor_email 
+        $query = "SELECT l.*, v.full_name as vendor_name, v.email as vendor_email 
                   FROM " . $this->table_name . " l
-                  JOIN users u ON l.vendor_id = u.id
+                  JOIN vendors v ON l.vendor_id = v.id
                   WHERE l.status = 'pending' ORDER BY l.created_at ASC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
@@ -178,9 +178,9 @@ class Location {
     }
 
     public function findAll() {
-        $query = "SELECT l.*, u.name as vendor_name 
+        $query = "SELECT l.*, v.full_name as vendor_name 
                   FROM " . $this->table_name . " l
-                  LEFT JOIN users u ON l.vendor_id = u.id
+                  LEFT JOIN vendors v ON l.vendor_id = v.id
                   ORDER BY l.created_at DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();

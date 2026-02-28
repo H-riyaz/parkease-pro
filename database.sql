@@ -71,6 +71,7 @@ CREATE TABLE `locations` (
   `price_per_hour` DECIMAL(10,2) NOT NULL,
   `total_slots` INT NOT NULL,
   `image_url` VARCHAR(255) DEFAULT NULL,
+  `qr_code_url` VARCHAR(255) DEFAULT NULL,
   `status` ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -126,4 +127,4 @@ CREATE TABLE `reviews` (
 -- Seed: Default Admin (Password: admin123)
 -- ------------------------------------------------------------
 INSERT INTO `admins` (`full_name`, `email`, `password`) VALUES
-('Admin User', 'admin@parkease.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
+('Admin User', 'admin@parkease.com', '$2y$10$c.9RZWOo06VXgiYSNIO8mOybsxLiYf2Zrhamf2iJPwXtjlvIMl/Iy');

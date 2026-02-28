@@ -4,7 +4,7 @@ class Database {
     private $conn;
     
     private $host = "localhost";
-    private $db_name = "parkease";
+    private $db_name = "parkease_pro";
     private $username = "root";
     private $password = "";
 

@@ -33,6 +33,13 @@ class Validator {
             $errors[] = "Invalid role selection";
         }
 
+        // Vendor-specific validation
+        if (isset($data['role']) && $data['role'] === 'vendor') {
+            if (empty($data['business_name'])) {
+                $errors[] = "Business name is required for vendors";
+            }
+        }
+
         return [
             'valid' => empty($errors),
             'errors' => $errors

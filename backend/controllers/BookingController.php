@@ -51,7 +51,7 @@ class BookingController {
             if($bookingId) {
                 return [
                     'success' => true, 
-                    'message' => 'Booking created successfully! Please complete payment.',
+                    'message' => 'Booking confirmed! Your spot is reserved.',
                     'booking_id' => $bookingId
                 ];
             }
