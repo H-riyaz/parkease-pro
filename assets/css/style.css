@@ -914,3 +914,47 @@ th {
 .marker-pulse .marker-pin {
     animation: markerPulse 2s infinite;
 }
+
+/* ===== Responsive Fixes ===== */
+
+/* Scrollable table wrapper */
+.table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-wrap table {
+    min-width: 600px;
+}
+
+/* Top bar stacking on mobile */
+@media (max-width: 768px) {
+    .top-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .auth-box {
+        max-width: 100%;
+    }
+}
+
+/* Small phone tweaks */
+@media (max-width: 480px) {
+    .hero {
+        padding: 3rem 1rem;
+    }
+
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .hero-stats .glass-panel {
+        padding: 1.25rem;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+    }
+}

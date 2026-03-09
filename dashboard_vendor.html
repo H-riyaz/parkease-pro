@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vendor Dashboard | ParkEase</title>
-    <link rel="stylesheet" href="./assets/css/style.css?v=4.0">
+    <link rel="stylesheet" href="./assets/css/style.css?v=5.0">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Leaflet CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
@@ -128,6 +128,7 @@
                 <h4 style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">
                     Booking History</h4>
                 <div class="glass-panel" style="padding: 0;">
+                    <div class="table-wrap">
                     <table style="width: 100%; border-collapse: collapse; text-align: left;">
                         <thead>
                             <tr style="background: rgba(255,255,255,0.05); color: var(--text-muted);">
@@ -145,13 +146,14 @@
                             </tr>
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </section>
         </main>
     </div>
 
-    <script src="./assets/js/utils.js?v=4.0"></script>
-    <script src="./assets/js/app.js?v=4.0"></script>
+    <script src="./assets/js/utils.js?v=5.0"></script>
+    <script src="./assets/js/app.js?v=5.0"></script>
     <script>
         function showSection(id) {
             document.querySelectorAll('main section').forEach(s => s.style.display = 'none');
