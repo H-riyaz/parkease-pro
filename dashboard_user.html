@@ -59,7 +59,7 @@
         async function loadBookings() {
             const list = document.getElementById('bookingList');
             try {
-                const response = await fetch('backend/router.php?action=get_my_bookings');
+                const response = await fetch('backend/router.php?action=get_my_bookings', { credentials: 'include' });
                 const result = await response.json();
 
                 if (result.success) {
@@ -111,6 +111,7 @@
                 const response = await fetch('backend/router.php?action=cancel_booking', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
                     body: JSON.stringify({ booking_id: id })
                 });
                 const result = await response.json();

@@ -77,13 +77,40 @@ async function handleAuth(event, action, isFormAdmin = false) {
     event.preventDefault();
     const submitBtn = event.target.querySelector('button[type="submit"]');
     const originalText = submitBtn ? submitBtn.innerText : 'Submit';
+
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData.entries());
+
+    // Frontend validation
+    if (action === 'register') {
+        if (!data.name || data.name.trim().length < 2) {
+            return alert('Please enter a valid full name (at least 2 characters).');
+        }
+        if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+            return alert('Please enter a valid email address.');
+        }
+        if (!data.phone || data.phone.trim().length < 7) {
+            return alert('Please enter a valid phone number.');
+        }
+        if (!data.password || data.password.length < 6) {
+            return alert('Password must be at least 6 characters.');
+        }
+        if (data.role === 'vendor' && (!data.business_name || data.business_name.trim() === '')) {
+            return alert('Business name is required for vendor accounts.');
+        }
+    } else {
+        if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+            return alert('Please enter a valid email address.');
+        }
+        if (!data.password || data.password.length < 1) {
+            return alert('Password is required.');
+        }
+    }
+
     if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.innerText = "Processing...";
     }
-
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData.entries());
 
     try {
         const response = await fetch(`backend/router.php?action=${action}`, {
@@ -311,7 +338,7 @@ function updateMapMarkers(locations, shouldFitBounds = true) {
                         <p style="color: #cbd5e1; font-size: 0.9em; margin-bottom: 1rem; line-height: 1.4;">
                             ${loc.description ? (loc.description.length > 50 ? loc.description.substring(0, 50) + '...' : loc.description) : 'Safe and secure parking spot.'}
                         </p>
-                        <img src="${loc.image_url || './assets/img/placeholder.jpg'}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;" onerror="this.style.display='none'">
+                        <img src="${loc.image_url || './assets/img/placeholder.svg'}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;" onerror="this.style.display='none'">
                         <button onclick="openBookingModal(${loc.id}, '${safeName}', ${loc.price_per_hour}, '${safeQr}')" 
                                 class="btn" style="width: 100%;">
                             Reserve Spot
@@ -423,7 +450,7 @@ async function loadLocations(fitBounds = true) {
                          onmouseleave="unhighlightMarker(${loc.id})"
                          >
                         <div style="height: 200px; background: #222; position: relative;">
-                             <img src="${loc.image_url ? loc.image_url : './assets/img/placeholder.jpg'}" alt="${loc.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='./assets/img/placeholder.jpg'">
+                             <img src="${loc.image_url ? loc.image_url : './assets/img/placeholder.svg'}" alt="${loc.name}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='./assets/img/placeholder.svg'">
                              <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: 1rem;">
                                 <span style="font-weight: 700; font-size: 1.1rem; color: white;">${loc.name}</span>
                              </div>
@@ -517,8 +544,6 @@ window.openBookingModal = function (id, name, price, qrUrl) {
             e.preventDefault();
             const btn = e.target.querySelector('button[type="submit"]');
             const oldText = btn.innerText;
-            btn.disabled = true;
-            btn.innerText = "Processing...";
 
             const data = {
                 location_id: document.getElementById('bookingLocId').value,
@@ -526,6 +551,25 @@ window.openBookingModal = function (id, name, price, qrUrl) {
                 end_time: e.target.end_time.value,
                 total_price: document.getElementById('inputTotalPrice').value
             };
+
+            // Frontend validation
+            if (!data.start_time || !data.end_time) {
+                return alert('Please select both start and end times.');
+            }
+            const startDate = new Date(data.start_time);
+            const endDate = new Date(data.end_time);
+            if (endDate <= startDate) {
+                return alert('End time must be after start time.');
+            }
+            if (startDate < new Date()) {
+                return alert('Start time cannot be in the past.');
+            }
+            if (!data.total_price || parseFloat(data.total_price) <= 0) {
+                return alert('Invalid price calculation. Please check your times.');
+            }
+
+            btn.disabled = true;
+            btn.innerText = "Processing...";
 
             try {
                 const response = await fetch('backend/router.php?action=book_slot', {

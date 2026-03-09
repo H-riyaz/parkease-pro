@@ -121,8 +121,22 @@ try {
         case 'get_all_users':
             $response = $admin->getUsers();
             break;
+        case 'get_all_vendors':
+            $response = $admin->getVendors();
+            break;
         case 'get_all_bookings':
+            $auth->requireAuth('admin');
             $response = $booking->getAllBookings();
+            break;
+        case 'get_pending_approvals':
+            $auth->requireAuth('admin');
+            $response = $location->getPendingApprovals();
+            break;
+        case 'delete_user':
+            if ($method === 'POST') {
+                $data = json_decode(file_get_contents("php://input"), true);
+                $response = $admin->deleteUser($data);
+            }
             break;
             
         default:

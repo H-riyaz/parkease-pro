@@ -128,5 +128,20 @@ class User {
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function findAllVendors() {
+        $query = "SELECT id, full_name, email, phone, business_name, pan_number, address, created_at FROM vendors ORDER BY created_at DESC";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function deleteById($id, $role) {
+        $table = $this->tables[$role] ?? null;
+        if (!$table) return false;
+        $stmt = $this->conn->prepare("DELETE FROM $table WHERE id = ?");
+        $stmt->bindParam(1, $id);
+        return $stmt->execute();
+    }
 }
 ?>

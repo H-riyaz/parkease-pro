@@ -3,6 +3,10 @@ require_once __DIR__ . '/../backend/config/db.php';
 require_once __DIR__ . '/../backend/models/User.php';
 require_once __DIR__ . '/../backend/models/Location.php';
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 $db = Database::getInstance()->getConnection();
 $userModel = new User();
 $locationModel = new Location();

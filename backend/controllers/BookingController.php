@@ -33,30 +33,37 @@ class BookingController {
             // Add user ID to data
             $data['user_id'] = $user['id'];
             
-            // Create booking
-            // If internal logic uses parking_id, model expects it.
             if(empty($data['parking_id']) && !empty($data['location_id'])) {
                 $data['parking_id'] = $data['location_id'];
             }
 
-            // Verify availability
-            if (!$this->locationModel->checkAvailability($data['parking_id'], $data['start_time'], $data['end_time'])) {
-                // Debug response for now
-                error_log("Unavailable: Slot ID " . $data['parking_id'] . " Time: " . $data['start_time'] . " to " . $data['end_time']);
-                return ['success' => false, 'message' => 'Slot unavailable for selected time. (Already booked or invalid time)'];
-            }
+            // Use transaction to prevent race conditions
+            $conn = Database::getInstance()->getConnection();
+            $conn->beginTransaction();
+            try {
+                // Verify availability within transaction
+                if (!$this->locationModel->checkAvailability($data['parking_id'], $data['start_time'], $data['end_time'])) {
+                    $conn->rollBack();
+                    return ['success' => false, 'message' => 'Slot unavailable for selected time. (Already booked or invalid time)'];
+                }
 
-            $bookingId = $this->bookingModel->create($data);
-            
-            if($bookingId) {
-                return [
-                    'success' => true, 
-                    'message' => 'Booking confirmed! Your spot is reserved.',
-                    'booking_id' => $bookingId
-                ];
+                $bookingId = $this->bookingModel->create($data);
+                
+                if($bookingId) {
+                    $conn->commit();
+                    return [
+                        'success' => true, 
+                        'message' => 'Booking confirmed! Your spot is reserved.',
+                        'booking_id' => $bookingId
+                    ];
+                }
+                
+                $conn->rollBack();
+                return ['success' => false, 'message' => 'Booking failed.'];
+            } catch (Exception $e) {
+                $conn->rollBack();
+                throw $e;
             }
-             
-             return ['success' => false, 'message' => 'Booking failed.'];
 
         } catch (Exception $e) {
             error_log("Create Booking Error: " . $e->getMessage());

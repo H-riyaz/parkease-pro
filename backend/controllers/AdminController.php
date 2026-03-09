@@ -31,6 +31,33 @@ class AdminController {
         }
     }
 
+    public function getVendors() {
+        try {
+            $this->auth->requireAuth('admin');
+            $vendors = $this->userModel->findAllVendors();
+            return ['success' => true, 'data' => $vendors];
+        } catch (Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
+
+    public function deleteUser($data) {
+        try {
+            $this->auth->requireAuth('admin');
+            $id = $data['id'] ?? null;
+            $role = $data['role'] ?? null;
+            if (!$id || !$role) return ['success' => false, 'message' => 'ID and role required'];
+            if (!in_array($role, ['user', 'vendor'], true)) {
+                return ['success' => false, 'message' => 'Invalid role'];
+            }
+
+            $success = $this->userModel->deleteById($id, $role);
+            return ['success' => $success, 'message' => $success ? 'User deleted' : 'Failed to delete'];
+        } catch (Exception $e) {
+            return ['success' => false, 'message' => $e->getMessage()];
+        }
+    }
+
     public function getStats() {
         try {
             $this->auth->requireAuth('admin');

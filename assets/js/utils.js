@@ -1,6 +1,14 @@
 // assets/js/utils.js
 
 class ParkEaseUtils {
+    // Escape HTML to prevent XSS
+    static escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     // Format date
     static formatDate(date, format = 'full') {
         const d = new Date(date);

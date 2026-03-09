@@ -151,8 +151,10 @@ class AuthController {
         $_SESSION['user_name'] = $user['full_name'];
         //$_SESSION['csrf_token'] = CSRF::generate();
         
-        // Regenerate session ID to prevent fixation
-        session_regenerate_id(true);
+        // Regenerate session ID to prevent fixation (only in web context)
+        if (!headers_sent()) {
+            session_regenerate_id(true);
+        }
     }
 }
 ?>

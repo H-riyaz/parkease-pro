@@ -194,6 +194,14 @@ class LocationController {
         } catch(Exception $e) { return ['success' => false, 'message' => $e->getMessage()]; }
     }
 
+    public function getPendingApprovals() {
+        try {
+            $this->authController->requireAuth('admin');
+            $locations = $this->locationModel->getPendingApprovals();
+            return ['success' => true, 'data' => $locations];
+        } catch(Exception $e) { return ['success' => false, 'message' => $e->getMessage()]; }
+    }
+
     private function validateLocationData($data) {
         $errors = [];
         
