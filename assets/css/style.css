@@ -293,6 +293,20 @@ textarea:focus {
     /* Soft Blue Glow */
 }
 
+/* Prevent hover transform on modal content and nested panels */
+.booking-modal-content,
+.booking-modal-content:hover {
+    transform: none !important;
+    overflow: visible;
+}
+
+/* Responsive booking modal for small screens */
+@media (max-height: 700px) {
+    .booking-modal-content {
+        padding: 1.25rem !important;
+    }
+}
+
 /* Navbar */
 .navbar {
     position: sticky;
