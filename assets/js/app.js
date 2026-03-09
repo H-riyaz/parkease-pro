@@ -50,17 +50,30 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function setupModals() {
-    // Only booking modal remains
     const modal = document.getElementById('bookingModal');
 
     // Legacy modal cleanup (if any)
     const oldAuth = document.getElementById('authModal');
-    if (oldAuth) oldAuth.remove(); // Ensure it doesn't conflict
+    if (oldAuth) oldAuth.remove();
 
-    // Close logic
-    window.onclick = function (event) {
-        if (event.target == modal) modal.style.display = "none";
+    // Close on backdrop click
+    if (modal) {
+        modal.addEventListener('click', function (event) {
+            if (event.target === modal) closeBookingModal();
+        });
     }
+
+    // Close on Escape key
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && modal && modal.classList.contains('active')) {
+            closeBookingModal();
+        }
+    });
+}
+
+window.closeBookingModal = function () {
+    const modal = document.getElementById('bookingModal');
+    if (modal) modal.classList.remove('active');
 }
 
 function setupForms() {
@@ -538,7 +551,8 @@ window.openBookingModal = function (id, name, price, qrUrl) {
             }
         }
 
-        modal.style.display = 'flex'; // Changed to flex for centering
+        modal.classList.add('active');
+        modal.scrollTop = 0;
 
         document.getElementById('bookingForm').onsubmit = async (e) => {
             e.preventDefault();
@@ -581,7 +595,7 @@ window.openBookingModal = function (id, name, price, qrUrl) {
 
                 if (res.success) {
                     alert("Booking Confirmed!");
-                    modal.style.display = 'none';
+                    closeBookingModal();
                     if (confirm("Your spot is reserved. Go to dashboard?")) {
                         window.location.href = 'dashboard_user.html';
                     }

@@ -244,44 +244,48 @@
     </footer>
 
     <!-- Booking Modal -->
-    <div id="bookingModal"
-        style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 2000; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 2rem 1rem;">
-        <div class="glass-panel booking-modal-content" style="width: 90%; max-width: 480px; padding: 1.5rem 1.5rem 1.5rem; position: relative; margin: auto;">
-            <span onclick="document.getElementById('bookingModal').style.display='none'"
-                style="position: absolute; right: 1rem; top: 1rem; cursor: pointer; font-size: 1.5rem; color: var(--text-muted); z-index: 10; line-height: 1;">&times;</span>
-
-            <h3 style="margin-bottom: 0.25rem; padding-right: 2rem;">Confirm Booking</h3>
-            <p id="bookingLocName" style="color: var(--primary); font-weight: 600; margin-bottom: 1rem; font-size: 0.95rem;">Location Name</p>
+    <div id="bookingModal" class="modal-overlay">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <button type="button" class="modal-close" onclick="closeBookingModal()">&times;</button>
+                <h3 style="padding-right: 2rem; margin-bottom: 0.25rem;">Confirm Booking</h3>
+                <p id="bookingLocName" style="color: var(--primary); font-weight: 600; font-size: 0.9rem;">Location Name</p>
+            </div>
 
             <form id="bookingForm">
-                <input type="hidden" name="location_id" id="bookingLocId">
-                <input type="hidden" id="bookingPriceRate">
-                <input type="hidden" name="total_price" id="inputTotalPrice">
+                <div class="modal-body">
+                    <input type="hidden" name="location_id" id="bookingLocId">
+                    <input type="hidden" id="bookingPriceRate">
+                    <input type="hidden" name="total_price" id="inputTotalPrice">
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
-                    <div>
-                        <label class="input-label">Start Time</label>
-                        <input type="datetime-local" name="start_time" required onchange="calcPrice()" style="font-size: 0.85rem; padding: 0.6rem 0.75rem;">
+                    <div class="modal-time-grid">
+                        <div>
+                            <label class="input-label">Start Time</label>
+                            <input type="datetime-local" name="start_time" required onchange="calcPrice()">
+                        </div>
+                        <div>
+                            <label class="input-label">End Time</label>
+                            <input type="datetime-local" name="end_time" required onchange="calcPrice()">
+                        </div>
                     </div>
-                    <div>
-                        <label class="input-label">End Time</label>
-                        <input type="datetime-local" name="end_time" required onchange="calcPrice()" style="font-size: 0.85rem; padding: 0.6rem 0.75rem;">
+
+                    <div class="modal-price-box">
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Estimated Total</p>
+                        <span style="color: var(--success); font-size: 1.4rem; font-weight: 700;">NPR <span id="totalPrice">0</span></span>
+                    </div>
+
+                    <div id="qrCodeContainer" style="display: none;">
+                        <div class="modal-qr-box">
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Scan QR to Pay</p>
+                            <img id="bookingQrImage" src="" alt="Payment QR Code"
+                                style="max-width: 140px; max-height: 140px; border-radius: 8px; background: white; padding: 4px;">
+                        </div>
                     </div>
                 </div>
 
-                <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.75rem; margin-bottom: 1rem; text-align: center;">
-                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.25rem;">Estimated Total</p>
-                    <span style="color: var(--success); font-size: 1.4rem; font-weight: 700;">NPR <span id="totalPrice">0</span></span>
+                <div class="modal-footer">
+                    <button type="submit" class="btn" style="width: 100%; padding: 0.75rem 1.5rem;">Confirm & Book</button>
                 </div>
-
-                <div id="qrCodeContainer" style="display: none; margin-bottom: 1rem;">
-                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 1rem; text-align: center;">
-                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">Scan QR to Pay</p>
-                        <img id="bookingQrImage" src="" alt="Payment QR Code" style="max-width: 160px; max-height: 160px; border-radius: 8px; background: white; padding: 6px;">
-                    </div>
-                </div>
-
-                <button type="submit" class="btn" style="width: 100%; padding: 0.75rem 1.5rem;">Confirm & Book</button>
             </form>
         </div>
     </div>
