@@ -76,6 +76,16 @@ window.closeBookingModal = function () {
     if (modal) modal.classList.remove('active');
 }
 
+window.zoomQr = function (frameEl) {
+    const src = frameEl.querySelector('img') ? frameEl.querySelector('img').src : '';
+    if (!src) return;
+    const overlay = document.getElementById('qrZoomOverlay');
+    const zoomImg = document.getElementById('qrZoomImg');
+    if (!overlay || !zoomImg) return;
+    zoomImg.src = src;
+    overlay.style.display = 'flex';
+}
+
 function setupForms() {
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
@@ -561,6 +571,18 @@ window.openBookingModal = function (id, name, price, qrUrl) {
             inp.min = minVal;
             inp.max = maxVal;
             inp.value = '';
+            // Hard-clamp year to 4 digits on every keystroke so user cannot type 35353
+            inp.oninput = function () {
+                if (!this.value) return;
+                const m = this.value.match(/^(\d+)([-T].*)$/);
+                if (!m) return;
+                let yr = m[1];
+                if (yr.length > 4) yr = yr.slice(0, 4);
+                const y = parseInt(yr, 10);
+                if (y > 2099) yr = '2099';
+                if (yr !== m[1]) this.value = yr + m[2];
+                calcPrice();
+            };
         });
         // Reset price display
         document.getElementById('totalPrice').innerText = '0';
