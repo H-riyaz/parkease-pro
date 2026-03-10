@@ -87,17 +87,16 @@ class Location {
     }
 
     public function getAllApproved($queryStr = null) {
-        // Subquery to count active bookings (confirmed or pending) that are currently active
-        // For simplicity in this "live" view, we'll just subtract active bookings from total.
-        // A more complex check would involve time ranges, but for "now", this is sufficient.
         $now = date('Y-m-d H:i:s');
         
+        // available_slots = total_slots minus all confirmed bookings that have NOT yet ended.
+        // This means any booking (current or future) reduces the visible count immediately.
         $query = "SELECT l.*, 
                   (l.total_slots - (
                       SELECT COUNT(*) FROM bookings b 
                       WHERE b.location_id = l.id 
                       AND b.status = 'confirmed'
-                      AND b.start_time <= :now AND b.end_time > :now
+                      AND b.end_time > :now
                   )) as available_slots
                   FROM " . $this->table_name . " l 
                   WHERE l.status = 'approved'";

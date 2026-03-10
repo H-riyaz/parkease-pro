@@ -455,7 +455,14 @@ async function loadLocations(fitBounds = true) {
                     return;
                 }
 
-                list.innerHTML = locations.map(loc => `
+                list.innerHTML = locations.map(loc => {
+                    const available = (loc.available_slots !== undefined) ? parseInt(loc.available_slots) : parseInt(loc.total_slots);
+                    const total = parseInt(loc.total_slots);
+                    const isFull = available <= 0;
+                    const slotColor = isFull ? 'var(--danger)' : (available < total * 0.3 ? 'var(--warning)' : 'var(--success)');
+                    const slotLabel = isFull ? 'Full' : `${available} / ${total} Available`;
+
+                    return `
                     <div class="glass-panel animate-fade-in location-card" 
                          style="padding: 0; overflow: hidden; display: flex; flex-direction: column; cursor: pointer; transition: transform 0.3s ease;"
                          onclick="flyToLocation(${loc.id})"
@@ -467,22 +474,28 @@ async function loadLocations(fitBounds = true) {
                              <div style="position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: 1rem;">
                                 <span style="font-weight: 700; font-size: 1.1rem; color: white;">${loc.name}</span>
                              </div>
+                             <span style="position: absolute; top: 10px; right: 10px; padding: 0.2rem 0.6rem; border-radius: 99px; font-size: 0.75rem; font-weight: 700; background: rgba(0,0,0,0.7); color: ${slotColor}; border: 1px solid ${slotColor};">
+                                 ${slotLabel}
+                             </span>
                         </div>
                         <div style="padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column;">
                             <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; flex-grow: 1;">${loc.address}</p>
                             
                             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem;">
-                                <span style="color: var(--text-muted);">Capacity</span>
-                                <strong>${loc.total_slots} Slots</strong>
+                                <span style="color: var(--text-muted);">Available Now</span>
+                                <strong style="color: ${slotColor};">${slotLabel}</strong>
                             </div>
                             <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem; font-size: 0.9rem;">
                                 <span style="color: var(--text-muted);">Rate</span>
                                 <strong style="color: var(--primary);">NPR ${loc.price_per_hour}/hr</strong>
                             </div>
-                            <button onclick="event.stopPropagation(); openBookingModal(${loc.id}, '${loc.name.replace(/'/g, "\\'")}', ${loc.price_per_hour}, '${loc.qr_code_url || ''}')" class="btn" style="width: 100%;">Book Spot</button>
+                            ${isFull
+                                ? `<button class="btn" style="width: 100%; opacity: 0.4; cursor: not-allowed;" disabled>Fully Booked</button>`
+                                : `<button onclick="event.stopPropagation(); openBookingModal(${loc.id}, '${loc.name.replace(/'/g, "\\'")}', ${loc.price_per_hour}, '${loc.qr_code_url || ''}')" class="btn" style="width: 100%;">Book Spot</button>`
+                            }
                         </div>
-                    </div>
-                `).join('');
+                    </div>`;
+                }).join('');
 
                 // Observe new elements for animation
                 const observer = new IntersectionObserver((entries) => {
@@ -538,6 +551,23 @@ window.openBookingModal = function (id, name, price, qrUrl) {
         document.getElementById('bookingLocId').value = id;
         document.getElementById('bookingPriceRate').value = price;
 
+        // Set min (now) and max (2099-12-31) on datetime inputs to prevent invalid years
+        const now = new Date();
+        now.setSeconds(0, 0);
+        const pad = n => String(n).padStart(2, '0');
+        const minVal = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+        const maxVal = '2099-12-31T23:59';
+        document.querySelectorAll('#bookingForm input[type="datetime-local"]').forEach(inp => {
+            inp.min = minVal;
+            inp.max = maxVal;
+            inp.value = '';
+        });
+        // Reset price display
+        document.getElementById('totalPrice').innerText = '0';
+        document.getElementById('inputTotalPrice').value = '0';
+        const qrAmt = document.getElementById('qrAmount');
+        if (qrAmt) qrAmt.innerText = '0';
+
         // QR Logic
         const qrContainer = document.getElementById('qrCodeContainer');
         if (document.getElementById('bookingQrImage')) {
@@ -571,6 +601,16 @@ window.openBookingModal = function (id, name, price, qrUrl) {
             }
             const startDate = new Date(data.start_time);
             const endDate = new Date(data.end_time);
+            const startYear = startDate.getFullYear();
+            const endYear = endDate.getFullYear();
+            const currentYear = new Date().getFullYear();
+
+            if (startYear < currentYear || startYear > 2099) {
+                return alert(`Start year must be between ${currentYear} and 2099.`);
+            }
+            if (endYear < currentYear || endYear > 2099) {
+                return alert(`End year must be between ${currentYear} and 2099.`);
+            }
             if (endDate <= startDate) {
                 return alert('End time must be after start time.');
             }
@@ -578,7 +618,7 @@ window.openBookingModal = function (id, name, price, qrUrl) {
                 return alert('Start time cannot be in the past.');
             }
             if (!data.total_price || parseFloat(data.total_price) <= 0) {
-                return alert('Invalid price calculation. Please check your times.');
+                return alert('Please select valid start and end times to calculate price.');
             }
 
             btn.disabled = true;
@@ -619,19 +659,23 @@ window.calcPrice = function () {
     const start = new Date(document.querySelector('input[name="start_time"]').value);
     const end = new Date(document.querySelector('input[name="end_time"]').value);
     const rate = parseFloat(document.getElementById('bookingPriceRate').value);
+    const currentYear = new Date().getFullYear();
 
-    if (!isNaN(start) && !isNaN(end) && end > start && rate) {
+    const validYear = y => !isNaN(y) && y >= currentYear && y <= 2099;
+
+    if (!isNaN(start) && !isNaN(end) && end > start && rate
+        && validYear(start.getFullYear()) && validYear(end.getFullYear())) {
         const hours = (end - start) / 36e5;
         const total = (Math.max(0, hours) * rate).toFixed(2);
         document.getElementById('totalPrice').innerText = total;
         document.getElementById('inputTotalPrice').value = total;
-        // Sync QR amount badge
         const qrAmt = document.getElementById('qrAmount');
         if (qrAmt) qrAmt.innerText = total;
     } else {
-        document.getElementById('totalPrice').innerText = "0";
+        document.getElementById('totalPrice').innerText = '0';
+        document.getElementById('inputTotalPrice').value = '0';
         const qrAmt = document.getElementById('qrAmount');
-        if (qrAmt) qrAmt.innerText = "0";
+        if (qrAmt) qrAmt.innerText = '0';
     }
 }
 

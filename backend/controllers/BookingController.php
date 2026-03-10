@@ -114,13 +114,24 @@ class BookingController {
     private function validateBookingData($data) {
         $errors = [];
         
-        // Allow parking_id OR location_id
         if (empty($data['parking_id']) && empty($data['location_id'])) $errors['parking_id'] = 'Parking location is required';
         if (empty($data['start_time'])) $errors['start_time'] = 'Start time is required';
         if (empty($data['end_time'])) $errors['end_time'] = 'End time is required';
-        
-        // Relaxed slot/vehicle validation
-        // if (empty($data['slot_number'])) $errors['slot_number'] = 'Slot number is required';
+
+        // Year range validation
+        if (!empty($data['start_time'])) {
+            $startYear = (int) date('Y', strtotime(str_replace('T', ' ', $data['start_time'])));
+            $currentYear = (int) date('Y');
+            if ($startYear < $currentYear || $startYear > 2099) {
+                $errors['start_time'] = "Start year must be between $currentYear and 2099";
+            }
+        }
+        if (!empty($data['end_time'])) {
+            $endYear = (int) date('Y', strtotime(str_replace('T', ' ', $data['end_time'])));
+            if ($endYear > 2099) {
+                $errors['end_time'] = 'End year must not exceed 2099';
+            }
+        }
         
         return $errors;
     }
