@@ -259,47 +259,58 @@
                     <input type="hidden" id="bookingPriceRate">
                     <input type="hidden" name="total_price" id="inputTotalPrice">
 
-                    <div class="modal-time-grid">
-                        <div>
-                            <label class="input-label">Start Time</label>
-                            <input type="datetime-local" name="start_time" required onchange="calcPrice()">
-                        </div>
-                        <div>
-                            <label class="input-label">End Time</label>
-                            <input type="datetime-local" name="end_time" required onchange="calcPrice()">
-                        </div>
-                    </div>
-
-                    <div class="modal-price-box">
-                        <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0.25rem;">Estimated Total</p>
-                        <span style="color: var(--success); font-size: 1.7rem; font-weight: 700;">NPR <span id="totalPrice">0</span></span>
-                    </div>
-
-                    <div id="qrCodeContainer" style="display: none;">
-                        <div class="payment-section">
-                            <div class="payment-section-header">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
-                                Payment Required
+                    <div class="booking-grid">
+                        <!-- Left: time + price -->
+                        <div class="booking-left">
+                            <div class="modal-time-grid">
+                                <div>
+                                    <label class="input-label">Start Time</label>
+                                    <input type="datetime-local" name="start_time" required onchange="calcPrice()">
+                                </div>
+                                <div>
+                                    <label class="input-label">End Time</label>
+                                    <input type="datetime-local" name="end_time" required onchange="calcPrice()">
+                                </div>
                             </div>
-                            <div class="payment-card">
-                                <div class="payment-qr-side">
-                                    <div class="qr-frame" title="Click to zoom" onclick="zoomQr(this)">
-                                        <img id="bookingQrImage" src="" alt="Payment QR Code">
+                            <div class="modal-price-box">
+                                <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0.25rem;">Estimated Total</p>
+                                <span style="color: var(--success); font-size: 1.7rem; font-weight: 700;">NPR <span id="totalPrice">0</span></span>
+                            </div>
+                        </div>
+
+                        <!-- Right: QR payment -->
+                        <div class="booking-right">
+                            <div id="qrCodeContainer" style="display: none;">
+                                <div class="payment-section">
+                                    <div class="payment-section-header">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                                        Payment Required
                                     </div>
-                                    <span class="qr-scan-hint">🔍 Tap to zoom</span>
-                                </div>
-                                <div class="payment-info-side">
-                                    <div class="payment-amount-block">
-                                        <p class="payment-amount-label">Total Amount</p>
-                                        <p class="payment-amount-value">NPR <span id="qrAmount">0</span></p>
+                                    <div class="payment-card">
+                                        <div class="payment-qr-side">
+                                            <div class="qr-frame" title="Click to zoom" onclick="zoomQr(this)">
+                                                <img id="bookingQrImage" src="" alt="Payment QR Code">
+                                            </div>
+                                            <span class="qr-scan-hint">🔍 Tap to zoom</span>
+                                        </div>
+                                        <div class="payment-info-side">
+                                            <div class="payment-amount-block">
+                                                <p class="payment-amount-label">Total Amount</p>
+                                                <p class="payment-amount-value">NPR <span id="qrAmount">0</span></p>
+                                            </div>
+                                            <ol class="payment-steps">
+                                                <li>Open <strong>eSewa</strong>, <strong>Khalti</strong>, or banking app</li>
+                                                <li>Scan the QR code</li>
+                                                <li>Complete the payment</li>
+                                                <li>Click <strong>Confirm &amp; Book</strong></li>
+                                            </ol>
+                                        </div>
                                     </div>
-                                    <ol class="payment-steps">
-                                        <li>Open <strong>eSewa</strong>, <strong>Khalti</strong>, or banking app</li>
-                                        <li>Scan the QR code on the left</li>
-                                        <li>Complete the payment</li>
-                                        <li>Click <strong>Confirm &amp; Book</strong> below</li>
-                                    </ol>
                                 </div>
+                            </div>
+                            <div id="qrPlaceholder" class="qr-placeholder" style="display: none;">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h2v2h-2zm4 0h2v2h-2zm-4 4h2v2h-2zm4 0h2v2h-2zm-4 4h6"/></svg>
+                                <p>No payment QR<br>Pay on arrival</p>
                             </div>
                         </div>
                     </div>

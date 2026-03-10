@@ -319,11 +319,11 @@ textarea:focus {
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-lg);
     width: 100%;
-    max-width: 580px;
+    max-width: 720px;
     margin: auto;
     display: flex;
     flex-direction: column;
-    max-height: 92vh;
+    max-height: 94vh;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(59, 130, 246, 0.1);
     animation: modalSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -345,6 +345,61 @@ textarea:focus {
     overflow-y: auto;
     flex: 1 1 auto;
     min-height: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.15) transparent;
+}
+
+.modal-body::-webkit-scrollbar {
+    width: 4px;
+}
+.modal-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+.modal-body::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 99px;
+}
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.28);
+}
+
+/* Two-column booking layout */
+.booking-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.booking-left {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Stack start/end inputs vertically inside the narrow left column */
+.booking-left .modal-time-grid {
+    grid-template-columns: 1fr;
+}
+
+.booking-right {
+    display: flex;
+    flex-direction: column;
+}
+
+.qr-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    border: 1px dashed rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    line-height: 1.6;
+    min-height: 160px;
 }
 
 .modal-footer {
@@ -398,7 +453,7 @@ textarea:focus {
 
 /* ── Payment QR card ── */
 .payment-section {
-    margin-top: 0.85rem;
+    margin-top: 0;
     border: 1px solid rgba(59, 130, 246, 0.25);
     border-radius: var(--radius-md);
     overflow: hidden;
@@ -512,6 +567,20 @@ textarea:focus {
     color: var(--text-main);
 }
 
+/* On narrow screens collapse two-column booking grid to single column */
+@media (max-width: 640px) {
+    .booking-grid {
+        grid-template-columns: 1fr;
+    }
+    /* Restore side-by-side time inputs when not constrained by booking-grid */
+    .booking-left .modal-time-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .payment-section {
+        margin-top: 0.5rem;
+    }
+}
+
 @media (max-width: 440px) {
     .payment-card {
         grid-template-columns: 1fr;
@@ -528,11 +597,8 @@ textarea:focus {
 }
 
 @media (max-width: 480px) {
-    .modal-time-grid {
-        grid-template-columns: 1fr;
-    }
     .modal-dialog {
-        max-height: 95vh;
+        max-height: 96vh;
         border-radius: var(--radius-md);
     }
     .modal-header,

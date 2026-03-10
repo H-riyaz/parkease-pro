@@ -592,13 +592,16 @@ window.openBookingModal = function (id, name, price, qrUrl) {
 
         // QR Logic
         const qrContainer = document.getElementById('qrCodeContainer');
+        const qrPlaceholder = document.getElementById('qrPlaceholder');
         if (document.getElementById('bookingQrImage')) {
             const qrImg = document.getElementById('bookingQrImage');
             if (qrUrl && qrUrl !== 'null' && qrUrl !== 'undefined' && qrUrl !== '') {
                 qrImg.src = qrUrl;
                 if (qrContainer) qrContainer.style.display = 'block';
+                if (qrPlaceholder) qrPlaceholder.style.display = 'none';
             } else {
                 if (qrContainer) qrContainer.style.display = 'none';
+                if (qrPlaceholder) qrPlaceholder.style.display = 'flex';
             }
         }
 
