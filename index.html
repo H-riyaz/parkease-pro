@@ -276,13 +276,31 @@
                     </div>
 
                     <div id="qrCodeContainer" style="display: none;">
-                        <div class="modal-qr-box">
-                            <span class="qr-step-label">📱 Scan &amp; Pay</span>
-                            <div class="qr-image-wrap">
-                                <img id="bookingQrImage" src="" alt="Payment QR Code">
+                        <div class="payment-section">
+                            <div class="payment-section-header">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+                                Payment Required
                             </div>
-                            <div class="qr-amount-badge">NPR <span id="qrAmount">0</span></div>
-                            <p class="qr-hint">Scan this QR with eSewa, Khalti, or your bank app.<br>After paying, click <strong style="color: var(--text-main);">Confirm &amp; Book</strong> below.</p>
+                            <div class="payment-card">
+                                <div class="payment-qr-side">
+                                    <div class="qr-frame">
+                                        <img id="bookingQrImage" src="" alt="Payment QR Code">
+                                    </div>
+                                    <span class="qr-scan-hint">Scan to Pay</span>
+                                </div>
+                                <div class="payment-info-side">
+                                    <div class="payment-amount-block">
+                                        <p class="payment-amount-label">Total Amount</p>
+                                        <p class="payment-amount-value">NPR <span id="qrAmount">0</span></p>
+                                    </div>
+                                    <ol class="payment-steps">
+                                        <li>Open <strong>eSewa</strong>, <strong>Khalti</strong>, or banking app</li>
+                                        <li>Scan the QR code on the left</li>
+                                        <li>Complete the payment</li>
+                                        <li>Click <strong>Confirm &amp; Book</strong> below</li>
+                                    </ol>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
