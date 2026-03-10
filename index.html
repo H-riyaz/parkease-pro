@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ParkEase - Find & Book Parking</title>
-    <link rel="stylesheet" href="assets/css/style.css?v=20260310b">
+    <link rel="stylesheet" href="assets/css/style.css?v=20260310c">
     <link rel="stylesheet" href="assets/css/map_styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -262,6 +262,13 @@
                     <div class="booking-grid">
                         <!-- Left: time + price -->
                         <div class="booking-left">
+                            <div class="booking-rate-card">
+                                <div>
+                                    <p class="booking-rate-label">Parking Rate</p>
+                                    <p class="booking-rate-value" id="bookingRateDisplay">NPR 0 / hr</p>
+                                </div>
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(59,130,246,0.5)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                            </div>
                             <div class="modal-time-grid">
                                 <div>
                                     <label class="input-label">Start Time</label>

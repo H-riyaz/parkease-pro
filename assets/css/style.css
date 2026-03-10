@@ -367,23 +367,55 @@ textarea:focus {
 .booking-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    align-items: start;
+    gap: 0;
+    align-items: stretch;
 }
 
 .booking-left {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-right: 1.5rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* Rate card at top of left column */
+.booking-rate-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(59, 130, 246, 0.07);
+    border: 1px solid rgba(59, 130, 246, 0.18);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+}
+
+.booking-rate-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 0.1rem;
+}
+
+.booking-rate-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 0;
 }
 
 /* Stack start/end inputs vertically inside the narrow left column */
 .booking-left .modal-time-grid {
     grid-template-columns: 1fr;
+    margin-bottom: 0;
 }
 
 .booking-right {
     display: flex;
     flex-direction: column;
+    padding-left: 1.5rem;
 }
 
 .qr-placeholder {
@@ -515,7 +547,7 @@ textarea:focus {
     height: 180px;
     min-width: 180px;
     max-width: 180px;
-    object-fit: contain;
+    object-fit: fill;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
     border-radius: 4px;

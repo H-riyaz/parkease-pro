@@ -87,35 +87,32 @@ class Location {
     }
 
     public function getAllApproved($queryStr = null) {
-        $now = date('Y-m-d H:i:s');
-        
-        // available_slots = total_slots minus all confirmed bookings that have NOT yet ended.
-        // This means any booking (current or future) reduces the visible count immediately.
-        $query = "SELECT l.*, 
-                  (l.total_slots - (
-                      SELECT COUNT(*) FROM bookings b 
-                      WHERE b.location_id = l.id 
-                      AND b.status = 'confirmed'
-                      AND b.end_time > :now
-                  )) as available_slots
-                  FROM " . $this->table_name . " l 
+        // Use MySQL NOW() directly — avoids PDO named-param issues inside correlated subqueries
+        $query = "SELECT l.*,
+                  GREATEST(0,
+                      l.total_slots - (
+                          SELECT COUNT(*) FROM bookings b
+                          WHERE b.location_id = l.id
+                          AND b.status = 'confirmed'
+                          AND b.end_time > NOW()
+                      )
+                  ) AS available_slots
+                  FROM " . $this->table_name . " l
                   WHERE l.status = 'approved'";
-        
-        if($queryStr) {
+
+        if ($queryStr) {
             $query .= " AND (l.name LIKE :q OR l.address LIKE :q)";
         }
-        
+
         $query .= " ORDER BY l.created_at DESC";
-        
+
         $stmt = $this->conn->prepare($query);
-        
-        $stmt->bindParam(":now", $now);
-        
-        if($queryStr) {
+
+        if ($queryStr) {
             $term = "%{$queryStr}%";
             $stmt->bindParam(":q", $term);
         }
-        
+
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }

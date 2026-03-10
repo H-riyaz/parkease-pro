@@ -590,6 +590,10 @@ window.openBookingModal = function (id, name, price, qrUrl) {
         const qrAmt = document.getElementById('qrAmount');
         if (qrAmt) qrAmt.innerText = '0';
 
+        // Show rate per hour in the left column card
+        const rateDisplay = document.getElementById('bookingRateDisplay');
+        if (rateDisplay) rateDisplay.textContent = `NPR ${price} / hr`;
+
         // QR Logic
         const qrContainer = document.getElementById('qrCodeContainer');
         const qrPlaceholder = document.getElementById('qrPlaceholder');
