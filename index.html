@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!--There is the place where the leaflet.js is initialized for the external framework of js to display the live map availability . -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <style>
@@ -276,9 +277,12 @@
 
                     <div id="qrCodeContainer" style="display: none;">
                         <div class="modal-qr-box">
-                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Scan QR to Pay</p>
-                            <img id="bookingQrImage" src="" alt="Payment QR Code"
-                                style="max-width: 140px; max-height: 140px; border-radius: 8px; background: white; padding: 4px;">
+                            <span class="qr-step-label">📱 Scan &amp; Pay</span>
+                            <div class="qr-image-wrap">
+                                <img id="bookingQrImage" src="" alt="Payment QR Code">
+                            </div>
+                            <div class="qr-amount-badge">NPR <span id="qrAmount">0</span></div>
+                            <p class="qr-hint">Scan this QR with eSewa, Khalti, or your bank app.<br>After paying, click <strong style="color: var(--text-main);">Confirm &amp; Book</strong> below.</p>
                         </div>
                     </div>
                 </div>

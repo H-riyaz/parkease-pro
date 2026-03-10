@@ -540,10 +540,9 @@ window.openBookingModal = function (id, name, price, qrUrl) {
 
         // QR Logic
         const qrContainer = document.getElementById('qrCodeContainer');
-        // Check if container exists (it might not in older HTML)
         if (document.getElementById('bookingQrImage')) {
             const qrImg = document.getElementById('bookingQrImage');
-            if (qrUrl && qrUrl !== 'null' && qrUrl !== 'undefined') {
+            if (qrUrl && qrUrl !== 'null' && qrUrl !== 'undefined' && qrUrl !== '') {
                 qrImg.src = qrUrl;
                 if (qrContainer) qrContainer.style.display = 'block';
             } else {
@@ -622,12 +621,17 @@ window.calcPrice = function () {
     const rate = parseFloat(document.getElementById('bookingPriceRate').value);
 
     if (!isNaN(start) && !isNaN(end) && end > start && rate) {
-        const hours = (end - start) / 36e5; // hours
+        const hours = (end - start) / 36e5;
         const total = (Math.max(0, hours) * rate).toFixed(2);
         document.getElementById('totalPrice').innerText = total;
         document.getElementById('inputTotalPrice').value = total;
+        // Sync QR amount badge
+        const qrAmt = document.getElementById('qrAmount');
+        if (qrAmt) qrAmt.innerText = total;
     } else {
         document.getElementById('totalPrice').innerText = "0";
+        const qrAmt = document.getElementById('qrAmount');
+        if (qrAmt) qrAmt.innerText = "0";
     }
 }
 
